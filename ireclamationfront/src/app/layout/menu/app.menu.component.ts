@@ -79,7 +79,7 @@ export class AppMenuComponent implements OnInit {
                     items: [
                         { label: 'Source de réclamation', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/sources'] },
                         { label: 'Type de réclamation', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/TypeReclamation'] },
-                        { label: 'Services MGPAP', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/services'] },
+                        { label: 'Services ', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/services'] },
                         { label: 'Utilisateurs', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/users'] },
                         { label: 'Adherents', icon: 'pi pi-fw pi-home', routerLink: ['/app/Reclamation/adherents'] },
                     ]
