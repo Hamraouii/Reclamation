@@ -1,0 +1,69 @@
+@using System.Globalization
+@model iReclamation.Dtos.ReclamationDto
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <title>Reclamation Report</title>
+    <style>
+    .flex-btw{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    
+    .flex-clmn{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: end;
+    align-items: end;
+    }
+    
+    .flex-end{
+     display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+    *{
+    font-family: Aldhabi;
+    font-size: larger;
+    
+    }
+    </style>
+</head>
+<body>
+<h1>Enveloppe de Réclamation</h1>
+
+<div class="flex-btw">
+    <div> @Model.Services.LibelleAr</div>
+    <div> @DateTime.Now.ToString("dddd dd MMMM yyyy", new CultureInfo("ar-AE"));
+    </div>
+</div>
+<div class="flex-clmn">
+    <div> إلــى
+         السيــد (ة) <span>@Model.NomAdherent @Model.PrenomAdherent </span></div>
+    <div> @Model.AdresseAdherent
+    </div>
+    <div> @Model.villeAdherent
+    </div>
+    <div> <span>المــوضــوع : </span> <span> @Model.TypeReclamations.LibelleAr</span></div>
+    <div> <span>المــرجــع :  رســالتكــم بتــاريخ </span> <span> @Model.DateReception.Value.ToString(" dddd dd MMMM yyyy", new CultureInfo("ar-AE"));</span></div>
+    <div> <span>تــحت رقم: </span> <span> @Model.Reference</span></div>
+    <div> <span>ســلام تــام بــوجــود مــولانــا الإمــام؛</span> </div>
+    
+</div>
+
+<br/>
+@if (!string.IsNullOrEmpty(Model.Reponse))
+{
+        <span>الـجـــواب؛</span>
+    <div>@Model.Reponse</div> 
+        <p STYLE="text-align: justify;"> .مـــع خـــالص الـتـحـيـــات.والســـلام  </p>
+}
+
+<br/>
+<br/>
+
+</body>
+</html>

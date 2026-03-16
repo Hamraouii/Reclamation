@@ -1,0 +1,53 @@
+@model List<iReclamation.DashboardClass.RecCountByPeriod>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reclamation Report</title>
+    <style>
+        /* Add custom CSS styles for PDF layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Reclamation Report</h1>
+<br/>
+<br/>
+<br/>
+<table>
+    <thead>
+    <tr>
+        <th>Service	</th>
+        <th>Moin d'un mois</th>
+        <th>Entre 1 et 2 Mois</th>
+        <th>Plus de 2 Mois</th>
+
+
+                
+        <!-- Add headers for other properties -->
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var reclamation in Model)
+    {
+        <tr>
+            <td>@reclamation.ServiceName
+            <td>@reclamation.LessThanOneMonth</td>
+            <td>@reclamation.BetweenOneAndTwoMonths </td>
+            <td>@reclamation.MoreThanTwoMonths </td>
+
+            <!-- Add data cells for other properties -->
+        </tr>
+    }
+    </tbody>
+</table>
+</body>
+</html>

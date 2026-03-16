@@ -1,0 +1,50 @@
+<p-fieldset legend="Reclamation {{ReclamationId}}">
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">Reference:</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.reference}}</span>
+        </div>
+        <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">Date Reception:</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.dateReceptionString }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">service :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.services?.libelle
+            }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">source :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.sources?.libelle
+            }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">typeReclamation :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.typeReclamations?.libelle
+            }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">etatReclamation :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.etatReclamation?.libelle
+            }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">service :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.adherent?.immatriculation
+            }}</span>
+    </div>
+    <div class="field col-6">
+        <span
+            class="font-semibold text-green-400 border-1 border-round-lg surface-border border-solid p-2">Reponse :</span>
+        <span class="border-1 border-round-lg surface-border border-solid p-2">{{ reclamation?.reponse
+            }}</span>
+    </div>
+</div>
+</p-fieldset>

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql
+    environment:
+      SA_PASSWORD: "StrongP@ssword123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - ireclamation-network
+
+  ireclamation-api:
+    build:
+      context: ./ireclamation
+      dockerfile: Dockerfile
+    container_name: ireclamation-api
+    depends_on:
+      - sqlserver
+    ports:
+      - "5000:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sql,1433;Database=iReclamation;User Id=sa;Password=StrongP@ssword123;TrustServerCertificate=True;MultipleActiveResultSets=True;"
+    networks:
+      - ireclamation-network
+
+  ireclamationfront:
+    build:
+      context: ./ireclamationfront
+      dockerfile: Dockerfile
+    container_name: ireclamationfront
+    depends_on:
+      - ireclamation-api
+    ports:
+      - "4200:80"
+    environment:
+      API_URL: "http://ireclamation-api:80"
+    networks:
+      - ireclamation-network
+
+networks:
+  ireclamation-network:
+    driver: bridge 

@@ -1,0 +1,45 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/layout/images/logo.png" alt="">
+        <span>Reclamation </span>
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu"
+        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <button class="p-link layout-topbar-button" (click)="op.toggle($event)">
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </button>
+        <button class="p-link layout-topbar-button p-button-danger" (click)="LogOut()">
+            <i class="pi pi-sign-out"></i>
+            <span>Logout</span>
+        </button>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                               User panel                                -->
+<!-- ----------------------------------------------------------------------- -->
+<p-overlayPanel #op>
+    <ng-template pTemplate="content">
+        <div class="flex gap-1">
+            <div class="flex flex-column justify-content-center">
+                <p-avatar icon="pi pi-user" styleClass="mr-2" size="large"
+                    [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </div>
+            <div class="flex flex-column">
+                <label style="font-weight: bold;">{{fullname}}</label>
+                <p-chip label="{{FonctionOuRoles}}" icon="pi pi-shield"></p-chip>
+            </div>
+        </div>
+    </ng-template>
+</p-overlayPanel>

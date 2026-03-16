@@ -1,0 +1,49 @@
+<app-loader *ngIf="_LoadingService.isLoading"></app-loader>
+<p-toast></p-toast>
+<section>
+    <div class="imgBx">
+        <img src="./assets/layout/images/bglogin.png" alt="backgroung" />
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <p-card>
+                <div class="flex justify-content-center" style="align-items: center">
+                    <img src="./assets/layout/images/logo.png" width="140"  alt="Logo" />
+                </div>
+<br>
+                <div class="text-center">
+                    <span>Authentification</span>
+                </div>
+                <form [formGroup]="FormulaireLogin" (ngSubmit)="LoginUtilisateur()">
+                    <div class="inputBx" [ngClass]="{
+                        }">
+                        <span>Nom d'utilisateur</span>
+                        <input type="text" formControlName="Username" minlength="3" maxlength="100" placeholder="..." />
+                    </div>
+                    <div class="inputBx" [ngClass]="{
+                           
+                        }">
+                        <span>Mot de passe</span>
+                        <input type="password" formControlName="Password" placeholder="..." />
+                    </div>
+                    <div class="inputBx">
+                        <input type="submit" class="btn-submit" value="Accéder" [disabled]="_LoadingService.isLoading"
+                            (keyup.enter)="LoginUtilisateur()" [readonly]="_LoadingService.isLoading" />
+                    </div>
+                </form>
+            </p-card>
+        </div>
+    </div>
+</section>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--               Sélectionner le rôle d'ouverture de session               -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog header="Sélectionner le rôle d'ouverture de session" [(visible)]="IsMultiplRole" [closable]="false" [dismissableMask]="false"
+    [style]="{ 'min-width': '30vw', 'min-height': '30vh' }"  [draggable]="false" [resizable]="false" [modal]="true" class="SelectRole">
+    <p-selectButton class="" [options]="list_roles" optionLabel="roleName" (onChange)="SelectRole($event)">
+        <ng-template let-item pTemplate>
+            <span style="font-weight: bold;"><i class="pi pi-user"></i>&nbsp;{{item.roleName}}</span>
+        </ng-template>
+    </p-selectButton>
+</p-dialog>

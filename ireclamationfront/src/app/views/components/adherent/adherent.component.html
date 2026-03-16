@@ -1,0 +1,445 @@
+<p-toast></p-toast>
+<app-loader></app-loader>
+<p-confirmPopup></p-confirmPopup>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            
+
+            <div  class=" my-5 flex justify-content-end">
+                <p-button pTooltip="Ajouter" tooltipPosition="top" size="large" icon="pi pi-plus" severity="succes"
+                    (click)="ShowAddAdherent()"></p-button>
+            </div>
+
+            <br>
+            <p-fieldset legend="Formulaire de recherche " [toggleable]="true">
+                <form [formGroup]="FormmulaireRecherche" (ngSubmit)="getAdherentswithFilter()">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="Immatriculation">Immatriculation</label>
+                            <input type="text" pInputText id="Immatriculation" formControlName="Immatriculation" 
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="Affiliation">Affiliation</label>
+                            <input type="text" pInputText id="Affiliation" formControlName="Affiliation" 
+                            />
+                        </div>
+
+                    </div>
+                    <div class="flex justify-content-center center_media mt-3">
+                        
+                        <button pButton pRipple type="submit" icon="pi pi-search" iconPos="right"
+                            (disabled)="_loadingService.isLoading" label="Rechercher / Rafraîchir"
+                            class="p-button-secondary mr-2 mb-2"></button>
+                    </div>
+                </form>
+            </p-fieldset>
+            <div class="card flex justify-content-center">
+                <p-table class="w-full" [value]="adherents" dataKey="id" [paginator]="true"
+                    [showCurrentPageReport]="true" [rows]="take"
+                    currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th  style="width:20%">Affiliation </th>
+                            <th  style="width:20%">Immatriculation </th>
+                            <th  style="width:20%">Nom </th>
+                            <th  style="width:20%">Prenom </th>
+
+                            <th style="width:20%">Region</th>
+                            <th style="width:20%">Ville</th>
+                            <th style="width:20%">Organisme</th>
+                            <th style="width:20%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-adherent>
+                        <tr>
+                            <td>{{adherent.affiliation}}</td>
+                            <td>{{adherent.immatriculation}}</td>
+                            <td>{{adherent.nom}}</td>
+                            <td>{{adherent.prenom}}</td>
+                            <td>{{adherent.region?.nom}}</td>
+                            <td>{{adherent.ville?.libelle}}</td>
+                            <td>{{adherent.organisme}}</td>
+                            <td>
+                                <div class="flex gap-2"><button  pButton pRipple pTooltip="Editer"
+                                        tooltipPosition="top" class="p-button-success p-button-rounded"
+                                        icon="pi pi-file-edit"
+                                        (click)="ShowEditAdherent(); setEditedAdherent(adherent?.id); $event.stopPropagation()"></button>
+                                    <button  pTooltip="Supprimer" tooltipPosition="top" pButton
+                                        pRipple class="p-button-danger p-button-rounded" icon="pi pi-trash"
+                                        (click)="showConfirmDelete(adherent)"></button>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9">
+                                <div class="text-center">
+                                    <div class="center_media">
+                                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data">
+                                    </div>
+                                    <p *ngIf="!is_loading" class="font-weight-bold mt-2">
+                                        Aucun enregistrement sur la base de données
+                                    </p>
+                                    <p *ngIf="is_loading" class="font-weight-bold mt-2">
+                                        Chargement ...
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            addProcessDialog                             -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="addAdherentsDialog" [style]="{width: '900px'}" header="Ajouter Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireAddAdherent">
+            <div class="p-fluid p-formgrid grid">
+
+                <div class="field col-6">
+                    <label for="Affiliation">Affiliation *</label>
+                    <input type="text" pInputText id="Affiliation" formControlName="Affiliation" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError.Immatriculation.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Immatriculation">Immatriculation *</label>
+                    <input type="text" pInputText id="Immatriculation" formControlName="Immatriculation" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Nom">Nom *</label>
+                    <input type="text" pInputText id="Nom" formControlName="Nom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Prenom">Prenom *</label>
+                    <input type="text" pInputText id="Prenom" formControlName="Prenom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Cin">CIN *</label>
+                    <input type="text" pInputText id="Cin" formControlName="Cin" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Adresse">Adresse *</label>
+                    <input type="text" pInputText id="Adresse" formControlName="Adresse" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Email">Email </label>
+                    <input type="text" pInputText id="Email" formControlName="Email" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Telephone">Numero telephone </label>
+                    <input type="text" pInputText id="Telephone" formControlName="Telephone" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Numppr">Numero ppr </label>
+                    <input type="text" pInputText id="Numppr" formControlName="Numppr" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="Situationfamiliale">Situationfamiliale *</label>
+                    <p-dropdown [options]="['Célibataire','Divorcé','Marié']" id="Situationfamiliale" formControlName="Situationfamiliale"
+                         placeholder="-- Fait Votre Choix --"
+                        (onChange)="getVilles()">
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['ServiceId'].errors}"> -->
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="Sexe">Sexe *</label>
+                    <p-dropdown [options]="['Male','Female']" id="Sexe" formControlName="Sexe"
+                         placeholder="-- Fait Votre Choix --"
+                        (onChange)="getVilles()"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['ServiceId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Organisme">Organisme *</label>
+                    <input type="text" pInputText id="Organisme" formControlName="Organisme" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="RegionId">Region *</label>
+                    <p-dropdown [options]="regions" id="RegionId" formControlName="RegionId"
+                        optionLabel="nom"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['ServiceId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+                <div class="field col-12">
+                    <label for="VilleId">Ville *</label>
+                    <p-dropdown [disabled]="!regionId" [options]="villes" id="VilleId" formControlName="VilleId"
+                        optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['VilleId'].errors}">
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError['VilleId'].errors">Champ
+                        obligatoire.</small>
+                </div>
+                <div class="field col-4">
+                    <label for="datenaissance">Datenaissance *</label>
+                    <input type="date" pInputText id="datenaissance" formControlName="Datenaissance" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="daterecrutement">Daterecrutement *</label>
+                    <input type="date" pInputText id="daterecrutement" formControlName="Daterecrutement" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="dateaffiliation">Dateaffiliation *</label>
+                    <input type="date" pInputText id="dateaffiliation" formControlName="Dateaffiliation" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+               
+                
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseAddAdherent()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="saveAdherent()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            EditProcessDialog                            -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="editAdherentsDialog" [style]="{width: '900px'}" header="Modifier Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireEditAdherent">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-6">
+                    <label for="Affiliation">Affiliation *</label>
+                    <input type="text" pInputText id="Affiliation" formControlName="Affiliation" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError.Immatriculation.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Immatriculation">Immatriculation *</label>
+                    <input type="text" pInputText id="Immatriculation" formControlName="Immatriculation" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Nom">Nom *</label>
+                    <input type="text" pInputText id="Nom" formControlName="Nom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Prenom">Prenom *</label>
+                    <input type="text" pInputText id="Prenom" formControlName="Prenom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Email">Email </label>
+                    <input type="text" pInputText id="Email" formControlName="Email" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Telephone">Numero telephone </label>
+                    <input type="text" pInputText id="Telephone" formControlName="Telephone" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Numppr">Numero ppr </label>
+                    <input type="text" pInputText id="Numppr" formControlName="Numppr" 
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="Situationfamiliale">Situationfamiliale *</label>
+                    <p-dropdown [options]="['Célibataire','Divorcé','Marié']" id="Situationfamiliale" formControlName="Situationfamiliale"
+                         placeholder="-- Fait Votre Choix --"
+                        (onChange)="getVilles()">
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['ServiceId'].errors}"> -->
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="Sexe">Sexe *</label>
+                    <p-dropdown [options]="['Male','Female']" id="Sexe" formControlName="Sexe"
+                         placeholder="-- Fait Votre Choix --"
+                        (onChange)="getVilles()"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['ServiceId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Organisme">Organisme *</label>
+                    <input type="text" pInputText id="Organisme" formControlName="Organisme" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="RegionId">Region *</label>
+                    <p-dropdown [options]="regions" id="RegionId" formControlName="RegionId"
+                        optionLabel="nom"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['RegionId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RegionId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+                <div class="field col-12">
+                    <label for="VilleId">Ville *</label>
+                    <p-dropdown [options]="villes" id="VilleId" formControlName="VilleId"
+                        optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError['VilleId'].errors}">
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddAdherentsError['VilleId'].errors">Champ
+                        obligatoire.</small>
+                </div>
+                <div class="field col-4">
+                    <label for="datenaissance">Datenaissance *</label>
+                    <input type="datetime" pInputText id="datenaissance" formControlName="Datenaissance" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="daterecrutement">Daterecrutement *</label>
+                    <input type="date" pInputText id="daterecrutement" formControlName="Daterecrutement" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="dateaffiliation">Dateaffiliation *</label>
+                    <input type="date" pInputText id="dateaffiliation" formControlName="Dateaffiliation" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddAdherentsError.immatriculation.errors}" /> -->
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddConstatError.Delais.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseEditAdherent()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="EditAdherent();"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Delete Action                              -->
+<!-- ----------------------------------------------------------------------- -->
+<p-toast class="cm-toast-confirm" position="center" key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirm()" label="Oui" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onReject()" label="Non" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+</p-toast>

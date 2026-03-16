@@ -1,0 +1,209 @@
+<p-toast></p-toast>
+<app-loader></app-loader>
+<p-confirmPopup></p-confirmPopup>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-fieldset legend="Formulaire de recherche " [toggleable]="true">
+                <form [formGroup]="FormmulaireRecherche" (ngSubmit)="getReclamationwithFilter()">
+                    <div class="p-fluid p-formgrid grid">
+
+                        <div class="field col-12 md:col-6">
+                            <label for="serviceId">Service:</label>
+                            <p-dropdown id="serviceId" [options]="services" formControlName="serviceId" optionLabel="libelle"
+                                optionValue="id" placeholder="-- Fait Votre Choix --">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="Id">Numero de reclamation</label>
+                            <input type="number" pInputText Id="Id" formControlName="Id" 
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="Reference">Reference BO</label>
+                            <input type="text" pInputText id="Reference" formControlName="Reference" 
+                            />
+                        </div>
+
+                    </div>
+                    <div class="flex justify-content-center center_media mt-3">
+                        
+                        <button pButton pRipple type="submit" icon="pi pi-search" iconPos="right"
+                            (disabled)="_loadingService.isLoading" label="Rechercher / Rafraîchir"
+                            class="p-button-secondary mr-2 mb-2"></button>
+                    </div>
+                </form>
+            </p-fieldset>
+            <br>
+            <hr><br>
+            <div class="card flex justify-content-center">
+                <p-table #dt1 class="w-full" [value]="reclamations" dataKey="id" [paginator]="true"
+                    [showCurrentPageReport]="true" [rows]="take"
+                    [globalFilterFields]="['id','reference', 'services.libelle', ]"
+                    currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                    <ng-template pTemplate="caption">
+                        <div class="flex">
+                            <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text"
+                                (input)="dt1.filterGlobal($event.target['value'], 'contains')"
+                                placeholder="Chercher ..." /></span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Délais</th>
+                            <th pSortableColumn="id" >Reference <p-sortIcon field="id"></p-sortIcon></th>
+                            <th pSortableColumn="reference"  >Reference BO <p-sortIcon field="reference"></p-sortIcon></th>
+                            <th>Reference BO dep</th>
+                            <th pSortableColumn="dateReceptionString"  >Date de réception <p-sortIcon field="dateReceptionString"></p-sortIcon></th>
+                            <th pSortableColumn="dateCreation"  >Date de Création <p-sortIcon field="dateCreation"></p-sortIcon></th>
+                            <th >Immatriculation</th>
+                            <th >Adherent/Entité</th>
+                            <th >Etat de Réclamation</th>
+                            <th >Réf BO dep</th>
+                            <th >Date dep</th>
+                            <th pSortableColumn="services.libelle" >Service <p-sortIcon field="services.libelle"></p-sortIcon></th>
+                            <th >Traité Par</th>
+                            <th >Crée Par</th>
+                            <th ></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-reclamation>
+                        <tr>
+                            <td>
+                                <p-button *ngIf="checkDeadline(reclamation.dateReceptionString)"
+                                 icon="pi pi-exclamation-triangle" rounded="true" severity="danger" outlined="true"></p-button>
+
+                            </td>
+                            <td>{{reclamation.id}}</td>
+                            <td>{{reclamation.reference}}</td>
+                            <td>{{reclamation.referenceBo ||  '-'}}</td>
+                            <td>{{reclamation.dateReception | date : 'dd/MM/yyyy'}}</td>
+                            <td>{{reclamation.dateCreation | date : 'dd/MM/yyyy'}}</td>
+                            <td>{{reclamation.adherent?.immatriculation}}</td>
+                            <td>{{reclamation.adherent?.nom + '' + reclamation.adherent?.prenom}}</td>
+                            <td>{{reclamation.etatReclamation?.libelle}}</td>
+                            <td>{{reclamation?.referenceBo ||  '-'}}</td>
+                            <td>{{reclamation?.dateBOinp ||  '-'}}</td>
+                            <td>{{reclamation.services?.libelle}}</td>
+                            <td>{{reclamation?.lastUserTreated}}</td>
+                            <td>{{reclamation?.user?.nom}} &nbsp; {{reclamation?.user?.prenom}}</td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <button  pButton pRipple pTooltip="Download"
+                                        tooltipPosition="top" class="p-button-success p-button-rounded p-button-outlined"
+                                        icon="pi pi-download" rounded="true" severity="success" outlined="true"
+                                        (click)="DownLoadFiles(reclamation?.file); $event.stopPropagation()"></button>
+                                    <button *ngIf="reclamation?.etatReclamationId != 1004 || isAdmin" pButton pRipple pTooltip="Affecter"
+                                        tooltipPosition="top" class="p-button-help p-button-rounded"
+                                        icon="pi pi-send"
+                                        (click)="ShowAffectReclamation(reclamation?.id); $event.stopPropagation()"></button>
+                                        <button *ngIf="reclamation?.etatReclamationId == 1004 || isAdmin" pButton pRipple pTooltip="Enveloppe"
+                                        tooltipPosition="top" class="p-button-secondary p-button-rounded"
+                                        icon="pi pi-envelope"
+                                        (click)="ExportEnveloppe(reclamation); $event.stopPropagation()"></button>
+                                    <button  pButton pRipple pTooltip="Editer"
+                                        tooltipPosition="top" class="p-button-success p-button-rounded"
+                                        icon="pi pi-file-edit"
+                                        [routerLink]="['/app/Reclamation/editReclamation/'+ reclamation.id
+                                         ]"
+                                        ></button>
+                                    <button *ngIf="isAdmin" pTooltip="Supprimer" tooltipPosition="top" pButton
+                                        pRipple class="p-button-danger p-button-rounded" icon="pi pi-trash"
+                                        (click)="showConfirmDelete(reclamation)"></button>
+                                        <button pButton pTooltip="Details de reclamation" tooltipPosition="top" pRipple
+                                        class="p-button-secondary p-button-rounded" icon="pi pi-info-circle"
+                                         [routerLink]="['/app/Reclamation/detailReclamation/'+ reclamation.id
+                                         ]"></button>
+
+                                        <button pButton pTooltip="Historique de reclamation" tooltipPosition="top" pRipple
+                                        class="p-button-warning p-button-rounded" icon="pi pi-cloud                                       "
+                                         [routerLink]="['/app/Reclamation/historyReclamation/'+ reclamation.id
+                                         ]"></button>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9">
+                                <div class="text-center">
+                                    <div class="center_media">
+                                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data">
+                                    </div>
+                                    <p *ngIf="!is_loading" class="font-weight-bold mt-2">
+                                        Aucun enregistrement sur la base de données
+                                    </p>
+                                    <p *ngIf="is_loading" class="font-weight-bold mt-2">
+                                        Chargement ...
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            addProcessDialog                             -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="AffectReclamationDialog" [style]="{width: '900px'}" header="Ajouter Reclamation" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireAffectReclamation">
+            <div class="p-fluid p-formgrid grid">
+
+                
+                <div class="field col-12">
+                    <label for="ServiceId">Service *</label>
+                    <p-dropdown  appendTo="body" [options]="services" id="ServiceId" formControlName="ServicesId"
+                        optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAffectReclamation['ServicesId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.ServiceId.errors">Champ
+                        obligatoire.</small> -->
+                </div> 
+            </div>  
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseAffectReclamation()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="affectReclamation()"></button>
+    </ng-template>
+</p-dialog>
+
+
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Delete Action                              -->
+<!-- ----------------------------------------------------------------------- -->
+<p-toast class="cm-toast-confirm" position="center" key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirm()" label="Oui" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onReject()" label="Non" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+</p-toast>

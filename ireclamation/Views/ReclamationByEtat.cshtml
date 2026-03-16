@@ -1,0 +1,51 @@
+@model List<iReclamation.DashboardClass.RecByEtat>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reclamation Report</title>
+    <style>
+        /* Add custom CSS styles for PDF layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Reclamation Report</h1>
+<br/>
+<br/>
+<br/>
+<table>
+    <thead>
+    <tr>
+        <th>Etat de reclamation	</th>
+        <th>nombre de reclamation</th>
+        <th>Taux</th>
+
+
+                
+        <!-- Add headers for other properties -->
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var reclamation in Model)
+    {
+        <tr>
+            <td>@reclamation.EtatName
+            <td>@reclamation.RecCount</td>
+            <td>@reclamation.TauxRec %</td>
+
+            <!-- Add data cells for other properties -->
+        </tr>
+    }
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<p-toast></p-toast>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-fieldset legend="Formulaire de recherche " [toggleable]="true">
+                <form [formGroup]="FormmulaireRecherche" (ngSubmit)="getReclamationCountBytype()">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="SourceId">Source :</label>
+                            <p-listbox [options]="sources" optionValue="id" formControlName="SourceId"
+                             optionLabel="libelle" [multiple]="true" [metaKeySelection]="false" ></p-listbox>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="DateDebut">Date de Début *</label>
+                            <input type="date" pInputText id="DateDebut" formControlName="DateDebut" required
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="DateEnd">Date de Fin *</label>
+                            <input type="date" pInputText id="DateEnd" formControlName="DateEnd" required
+                            />
+                        </div>
+                    </div>
+                    <div class="flex justify-content-center center_media mt-3">
+                        
+                        <button pButton pRipple type="submit" icon="pi pi-search" iconPos="right"
+                            (disabled)="_loadingService.isLoading" label="Rechercher / Rafraîchir"
+                            class="p-button-secondary mr-2 mb-2"></button>
+                    </div>
+                </form>
+            </p-fieldset>
+            <br>
+            <hr><br>
+            <!-- ----------------------------- With data ------------------------------ -->
+            <div *ngIf="ReclamationByType.length > 0">
+                <div class="card">
+                    <div class="flex gap-2 justify-content-end">
+                        
+                        <button  pButton pRipple pTooltip="Exporter Pdf"
+                                            tooltipPosition="top" class="p-button-help p-button-rounded"
+                                            icon="pi pi-file-pdf"
+                                            label="Exporter Pdf"
+                                            iconPos="right"
+                                            (click)="ExportRecByType(ReclamationByType); $event.stopPropagation()"></button>
+                        <button  pButton pRipple pTooltip="Exporter Excel"
+                                            tooltipPosition="top" class="p-button-help p-button-rounded"
+                                            icon="pi pi-file-excel"
+                                            label="Exporter Excel"
+                                            iconPos="right"
+                                            (click)="ExcelRecByType(ReclamationByType); $event.stopPropagation()"></button>
+                    </div> <br>
+                    <div class="card flex justify-content-center">
+                        <p-table class="w-full" [value]="ReclamationByType" dataKey="id" [paginator]="true"
+                            [showCurrentPageReport]="true" [rows]="5"
+                            currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th  style="width:20%">Type de reclamation </th>
+                                    <th  style="width:20%">total de reclamation </th>
+                                    <th  style="width:20%">reclamation cloturé</th>
+                                    <th  style="width:20%">Taux de traitement </th>
+        
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-reclamation>
+                                <tr>
+                                    <td>{{reclamation.typeReclamation}}</td>
+                                    <td>{{reclamation.totalReclamations}}</td>
+                                    <td>{{reclamation.reclamationsCloture}}</td>
+                                    <td>{{reclamation.percentage}} %</td>
+                            
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <!-- ------------------------------ No data ------------------------------- -->
+            <div *ngIf="ReclamationByType.length==0">
+                <div class="text-center">
+                    <div class="center_media">
+                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data" />
+                    </div>
+                    <p *ngIf="FormmulaireRecherche.valid" class="font-weight-bold mt-2">
+                        Pas de Reclamation dans ce filter
+                    </p>
+                    <p *ngIf="FormmulaireRecherche.invalid" class="font-weight-bold mt-2">
+                        Veuillez remplir le formulaire !
+                    </p>
+                    <p *ngIf="_loadingService.isLoading" class="font-weight-bold mt-2">
+                        Chargement ...
+                    </p>
+                </div>
+            </div>
+        </div>
+</div>

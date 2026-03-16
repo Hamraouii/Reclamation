@@ -1,0 +1,14 @@
+<div class="layout-wrapper scroll_Style" [ngClass]="containerClass">
+    <app-topbar></app-topbar>
+    <div class="layout-sidebar scroll_Style">
+        <app-sidebar></app-sidebar>
+    </div>
+    <div class="layout-main-container scroll_Style">
+        <div class="layout-main">
+            <router-outlet></router-outlet>
+        </div>
+        <app-footer></app-footer>
+    </div>
+    <!-- <app-config></app-config> -->
+    <div class="layout-mask"></div>
+</div>

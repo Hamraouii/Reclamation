@@ -1,0 +1,160 @@
+<p-toast></p-toast>
+<app-loader></app-loader>
+<p-confirmPopup></p-confirmPopup>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            
+
+            <div  class=" my-5 flex justify-content-end">
+                <p-button pTooltip="Ajouter" tooltipPosition="top" size="large" icon="pi pi-plus" severity="succes"
+                    (click)="ShowAddTypeReclamation()"></p-button>
+            </div>
+            <div class="card flex justify-content-center">
+                <p-table class="w-full" [value]="typeReclamations" dataKey="id" [paginator]="true"
+                    [showCurrentPageReport]="true" [rows]="take"
+                    currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th  style="width:20%">Libelle 
+                            </th>
+
+                            <th style="width:20%">Libelle Arabe</th>
+                            <th style="width:20%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-typeReclamation>
+                        <tr>
+                            <td>{{typeReclamation.libelle}}</td>
+                            <td>{{typeReclamation.libelleAr}}</td>
+                            <td>
+                                <div class="flex gap-2"><button  pButton pRipple pTooltip="Editer"
+                                        tooltipPosition="top" class="p-button-success p-button-rounded"
+                                        icon="pi pi-file-edit"
+                                        (click)="ShowEditTypeReclamation(); setEditedTypeReclamation(typeReclamation.id); $event.stopPropagation()"></button>
+                                    <button  pTooltip="Supprimer" tooltipPosition="top" pButton
+                                        pRipple class="p-button-danger p-button-rounded" icon="pi pi-trash"
+                                        (click)="showConfirmDelete(typeReclamation)"></button>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9">
+                                <div class="text-center">
+                                    <div class="center_media">
+                                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data">
+                                    </div>
+                                    <p *ngIf="!is_loading" class="font-weight-bold mt-2">
+                                        Aucun enregistrement sur la base de données
+                                    </p>
+                                    <p *ngIf="is_loading" class="font-weight-bold mt-2">
+                                        Chargement ...
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            addProcessDialog                             -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="addTypeReclamationsDialog" [style]="{width: '900px'}" header="Ajouter Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireAddTypeReclamation">
+            <div class="p-fluid p-formgrid grid">
+
+                <div class="field col-6">
+                    <label for="Libelle">Libelle *</label>
+                    <input type="text" pInputText id="Libelle" formControlName="Libelle" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddTypeReclamationsError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="LibelleAr">LibelleAr *</label>
+                    <input type="text" pInputText id="LibelleAr" formControlName="LibelleAr" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddTypeReclamationsError.LibelleAr.errors}" />
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && FormmulaireAddTypeReclamationsError.libelleAr.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseAddTypeReclamation()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="saveTypeReclamation()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            EditProcessDialog                            -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="editTypeReclamationsDialog" [style]="{width: '900px'}" header="Modifier Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireEditTypeReclamation">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-6">
+                    <label for="Libelle">Libelle *</label>
+                    <input type="text" pInputText id="Libelle" formControlName="Libelle" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireEditTypeReclamationsError.Libelle.errors}" />
+                    <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditTypeReclamationsError.Libelle.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-4">
+                    <label for="LibelleAr">LibelleAr *</label>
+                    <input type="text" pInputText id="LibelleAr" formControlName="LibelleAr" required />
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireEditTypeReclamationsError.libelleAr.errors}" />
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && FormmulaireEditTypeReclamationsError.libelleAr.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseEditTypeReclamation()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="EditTypeReclamation();"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Delete Action                              -->
+<!-- ----------------------------------------------------------------------- -->
+<p-toast class="cm-toast-confirm" position="center" key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirm()" label="Oui" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onReject()" label="Non" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+</p-toast>

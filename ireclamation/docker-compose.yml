@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql
+    environment:
+      SA_PASSWORD: "StrongP@ssword123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - ireclamation-network
+
+  ireclamation-api:
+    image: ireclamation # Make sure this image is built or use a `build:` context
+    container_name: ireclamation-api
+    depends_on:
+      - sqlserver
+    ports:
+      - "5000:80" # Maps host port 5000 to container's port 80
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sql,1433;Database=iReclamation;User Id=sa;Password=StrongP@ssword123;TrustServerCertificate=True;MultipleActiveResultSets=True;"
+    networks:
+      - ireclamation-network
+
+networks:
+  ireclamation-network:
+    driver: bridge

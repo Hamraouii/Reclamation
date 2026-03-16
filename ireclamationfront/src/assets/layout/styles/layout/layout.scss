@@ -1,0 +1,88 @@
+@import './_variables';
+@import "./_mixins";
+@import "./_preloading";
+@import "./_main";
+@import "./_topbar";
+@import "./_menu";
+@import "./_config";
+@import "./_content";
+@import "./_footer";
+@import "./_responsive";
+@import "./_utils";
+@import "./_typography";
+
+/* -------------------------------------------------------------------------- */
+/*                              layout-breadcrumb                             */
+/* -------------------------------------------------------------------------- */
+.layout-breadcrumb {
+    background-color: #1C6A52;
+    padding: 10px 30px;
+    display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.layout-breadcrumb .breadcrumb .route-bar-breadcrumb {
+    list-style: none;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+}
+
+.layout-breadcrumb .breadcrumb .route-bar-breadcrumb li {
+    padding: 0px 5px;
+    font-size: 15px;
+    color:white;
+    font-weight: 500;
+
+    a {
+        color: rgb(255, 255, 255);
+        box-shadow: inset;
+    }
+    // padding: 0 5px;
+    // font-size: 15px;
+    // color: #9199a9;
+    // font-weight: 500;
+}
+
+.layout-breadcrumb .breadcrumb .route-bar-breadcrumb li:first-child {
+    padding-left: 0;
+}
+
+.layout-breadcrumb .breadcrumb .route-bar-breadcrumb li i {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+@media (max-width: 991px) {
+    .layout-breadcrumb {
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0;
+    }
+
+    .layout-breadcrumb .breadcrumb {
+        width: 100%;
+        border-bottom: 1px solid rgb(10, 114, 10);
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        justify-content: center;
+        padding: 0 30px;
+        padding-bottom: 10px;
+    }
+
+    .layout-breadcrumb .notification {
+        padding: 0 30px;
+        padding-top: 10px;
+        text-align: center;
+    }
+}

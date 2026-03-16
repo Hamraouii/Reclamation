@@ -1,0 +1,7 @@
+@media (max-width: 991px) {
+  .notification {
+    ::ng-deep .p-button-label {
+      display: none !important;
+    }
+  }
+}

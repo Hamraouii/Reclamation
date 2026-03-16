@@ -1,0 +1,329 @@
+<p-toast></p-toast>
+<div class="grid">
+<p-fieldset class="col" legend="Infos de Réclamation" [toggleable]="true" >
+    <div class="field col-12">
+        <div class="flex flex-wrap gap-3">
+
+        <div class="flex align-items-center">
+            <p-radioButton name="ReponseAffect" value="Reponse"  [(ngModel)]="ReponseAffect" inputId="Reponse"></p-radioButton>
+            <label for="Reponse" class="ml-2">Saisir une réponse </label>
+        </div>
+        <div class="flex align-items-center">
+            <p-radioButton name="ReponseAffect" value="Affect" [(ngModel)]="ReponseAffect" inputId="Affect"></p-radioButton>
+            <label for="Affect" class="ml-2">Affecter </label>
+        </div>
+        </div>
+        </div>
+    <form [formGroup]="FormmulaireAddReclamation" (ngSubmit)="saveReclamation()">
+        
+        
+        <div class="p-fluid p-formgrid grid">
+            <div class="field col-6">
+                        <label for="SourceId">Source *</label>
+                        <p-dropdown  appendTo="body" [options]="sources" id="SourceId" formControlName="SourcesId"
+                        [(ngModel)]="selectedSource"
+                            optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddReclamationsError['SourcesId'].errors}">
+                        </p-dropdown>
+                        <small class="ng-dirty ng-invalid"
+                            *ngIf="submitted && FormmulaireAddReclamationsError['SourcesId'].errors">Champ
+                            obligatoire.</small>
+                    </div>
+                    
+
+            <div class="field col-6">
+                <label for="Reference">Identifiant Reclamation *</label>
+                <input type="text" pInputText id="Reference" formControlName="Reference" required
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="selectedSource == SourceOrgansime">
+                <label for="ReferenceBo">Identifiant Reclamation BO *</label>
+                <input type="text" pInputText id="ReferenceBo" formControlName="ReferenceBo" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="selectedSource == SourceOrgansime">
+                <label for="Destinataire">Destinataire *</label>
+                <input type="text" pInputText id="Destinataire" formControlName="Destinataire" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="selectedSource == SourceOrgansime">
+                <label for="Organisme">Organisme *</label>
+                <input type="text" pInputText id="Organisme" formControlName="Organisme" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="selectedSource == SourceOrgansime">
+                <label for="AdresseOrg">Adresse Organisation *</label>
+                <input type="text" pInputText id="AdresseOrg" formControlName="AdresseOrg" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+
+
+            <div class="field col-6">
+                <label for="DateReception">Date de Reception *</label>
+                <input type="date" pInputText id="DateReception" formControlName="DateReception" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="selectedSource == SourceOrgansime">
+                <label for="DateBOinp">Date BO *</label>
+                <input type="date" pInputText id="DateBOinp" formControlName="DateBOinp" 
+                     />
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6">
+                <label for="Resume">Résumé du reclamation *</label>
+                <textarea class="w-full" rows="6" cols="30" pInputTextarea id="Resume" formControlName="Resume" required
+                     ></textarea>
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" *ngIf="ReponseAffect == 'Reponse'">
+                <label for="Reponse">Réponse *</label>
+                <textarea class="w-full" rows="6" cols="30" pInputTextarea id="Reponse" formControlName="Reponse"
+                     ></textarea>
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireAddReclamationsError?.Libelle?.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6" >
+                <label for="NomAdherent">Nom d'adherent</label>
+                <input type="text" pInputText id="NomAdherent" formControlName="NomAdherent" 
+                     />
+            </div>
+
+            <div class="field col-6" >
+                <label for="PrenomAdherent">Prénom d'adherent</label>
+                <input type="text" pInputText id="PrenomAdherent" formControlName="PrenomAdherent" 
+                     />
+            </div>
+
+            <div class="field col-6" >
+                <label for="AdresseAdherent">Adresse d'adherent</label>
+                <input type="text" pInputText id="AdresseAdherent" formControlName="AdresseAdherent" 
+                     />
+            </div>
+
+            <div class="field col-6" >
+                <label for="VilleAdherent">Ville d'adherent</label>
+                <input type="text" pInputText id="VilleAdherent" formControlName="VilleAdherent" 
+                     />
+            </div>
+
+            <div class="field col-6" >
+                <label for="RegionAdherent">Region d'adherent</label>
+                <input type="text" pInputText id="RegionAdherent" formControlName="RegionAdherent" 
+                     />
+            </div>
+            
+            
+            <div class="field col-6" *ngIf="ReponseAffect == 'Affect'">
+                <label for="ServiceId">Service *</label>
+                <p-dropdown  appendTo="body" [options]="services" id="ServiceId" formControlName="ServicesId"
+                    optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddReclamationsError['ServicesId'].errors}">
+                </p-dropdown>
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireEditSmqError.ServiceId.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+            <div class="field col-6">
+                <label for="TypeReclamationsID">Type de Reclamations *</label>
+                <p-dropdown  appendTo="body" [options]="typeReclamations" id="TypeReclamationsID" formControlName="TypeReclamationsId"
+                    optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddReclamationsError['TypeReclamationsId'].errors}">
+                </p-dropdown>
+                <!-- <small class="ng-dirty ng-invalid"
+                    *ngIf="submitted && FormmulaireEditSmqError.TypeReclamationsID.errors">Champ
+                    obligatoire.</small> -->
+            </div>
+
+            <div class="field col-12">
+            <p-table #dt class="mt-2" [value]="listDossier" dataKey="numero_dossier" [rowsPerPageOptions]="[10,25,50,100]">
+            <ng-template pTemplate="caption" >
+                <div class="flex justify-content-end center_media mt-3">
+                    <div class="col-4">
+                        <button pButton pRipple type="button" pTooltip="ajouter un dossier"
+                            label="Ajouter un Dossier" (click)="ShowAddDossier()" class="p-button-primary mr-2 mb-2 "
+                            (disabled)="_loadingService.isLoading"></button>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="numero_dossier">Numero de dossier<p-sortIcon field="numero_dossier"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="annee_dossier">Année de dossier<p-sortIcon field="annee_dossier"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="etatDossierId">etat de Dossier<p-sortIcon field="etatDossierId"></p-sortIcon>
+                    </th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td style="min-width:10rem;">
+                        {{item?.Numero_dossier}}
+                    </td>
+                    <td style="min-width:10rem;">
+                        {{item?.Annee_dossier}}
+                    </td>
+                    <td style="min-width:10rem;">
+                        {{item?.EtatDossierId}}
+                    </td>
+
+                   
+                </tr>
+            </ng-template>
+            </p-table>
+        </div>
+
+            <div class="field col-12">
+                <label for="Document">Document *</label>
+                <p-fileUpload [showUploadButton]="false" name="image" chooseLabel="Sélectionner document" cost
+                    styleClass="p-button-help " chooseIcon="pi pi-file" [maxFileSize]="1000000" file
+                    (onSelect)="onFileChange($event)" 
+                    ></p-fileUpload>
+                
+            </div>
+            
+
+            
+            
+        </div>
+        
+        <div class="flex justify-content-end center_media mt-3">
+            <!-- ------------------------- vider le formulaire ------------------------- -->
+            <!-- ----------------------- Rechercher / Rafraîchir ----------------------- -->
+            <button pButton pRipple type="submit" icon="pi pi-check" iconPos="right" 
+            label="Enregistrer" class="p-button-success mr-2 mb-2"></button>
+        </div>
+    </form>
+</p-fieldset>
+<p-fieldset class="col-fixed" [style]="{ width : '400px' }" legend="Adherent" [toggleable]="true">
+    <form [formGroup]="FormmulaireAdherent" (ngSubmit)="getAdherentInfos()">
+        <div class="p-fluid p-formgrid grid">
+        <div class="field col-12">
+        <label for="AdherentID">Adherent *</label>
+        <input type="text" [(ngModel)]="SelectedAdherent"  pInputText id="AdherentID" formControlName="AdherentId" required
+             />
+            <button pButton pRipple type="submit" icon="pi pi-search" iconPos="right" 
+            label="Rechercher" class="p-button-help mr-2 mb-2"></button></div>
+    <div class="field col-12">
+        <label for="Immatriculation">Immatriculation*</label>
+        <input type="text" pInputText id="Immatriculation" readonly formControlName="Immatriculation" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Affiliation">Affiliation*</label>
+        <input type="text" pInputText id="Affiliation" readonly formControlName="Affiliation" />
+    </div>
+
+    <div class="field col-12">
+        <label for="CIN">CIN </label>
+        <input type="text" pInputText id="CIN" readonly formControlName="CIN" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Nom">Nom</label>
+        <input type="text" pInputText id="Nom" readonly formControlName="Nom" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Prenom">Prenom</label>
+        <input type="text" pInputText id="Prenom" readonly formControlName="Prenom" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Region">Region</label>
+        <input type="text" pInputText id="Region" readonly formControlName="Region" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Ville">Ville</label>
+        <input type="text" pInputText id="Ville" readonly formControlName="Ville" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Adresse">Adresse</label>
+        <input type="text" pInputText id="Adresse" readonly formControlName="Adresse" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Email">Email</label>
+        <input type="text" pInputText id="Email" readonly formControlName="Email" />
+    </div>
+
+    <div class="field col-12">
+        <label for="Tel">Tel</label>
+        <input type="text" pInputText id="Tel" readonly formControlName="Tel" />
+    </div>
+</div>
+</form>
+</p-fieldset>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                               Add  action                               -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="is_show_add_Dossier" [style]="{width: '40%'}" header="Ajouter ou modifier une action corrective
+" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireAddDossier">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-12">
+                    <label for="Numero_dossier">Numero de dossier *</label>
+                    <input type="number" pInputText id="Numero_dossier" formControlName="Numero_dossier" required
+                         />
+      
+                </div>
+                <div class="field col-6">
+                    <label for="Annee_dossier">Annee de dossier *</label>
+                    <input type="number" pInputText id="Annee_dossier" formControlName="Annee_dossier" required
+                        />
+                </div>
+                <div class="field col-6">
+                    <label for="EtatDossierId">Etat de dossier *</label>
+
+                    <p-dropdown id="EtatDossierId" [options]="Etat_Dossiers" formControlName="EtatDossierId"
+                        optionLabel="libelleFr" optionValue="id" placeholder="-- Fait Votre Choix --"
+                        >
+                    </p-dropdown>
+
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseAddDossier()"></button>
+        <button pButton pRipple label="Enregistrer" icon="pi pi-check" class="p-button-success"
+            (click)="addDossier()"></button>
+    </ng-template>
+</p-dialog>
+            
+
+                 
+
+    
+    
+    

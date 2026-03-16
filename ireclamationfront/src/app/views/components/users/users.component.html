@@ -1,0 +1,265 @@
+<p-toast></p-toast>
+<app-loader></app-loader>
+<p-confirmPopup></p-confirmPopup>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            
+
+            <div  class=" my-5 flex justify-content-end">
+                <p-button pTooltip="Ajouter" tooltipPosition="top" size="large" icon="pi pi-plus" severity="succes"
+                    (click)="ShowAddUser()"></p-button>
+            </div>
+            <div class="card flex justify-content-center">
+                <p-table class="w-full" [value]="users" dataKey="id" [paginator]="true"
+                    [showCurrentPageReport]="true" [rows]="take"
+                    currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                    [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th  style="width:20%">Nom </th>
+                            <th  style="width:20%">Prenom </th>
+                            <th  style="width:20%">Email </th>
+
+                            <th style="width:20%">Login</th>
+                            <th style="width:20%">Role</th>
+                            <th style="width:20%">Service</th>
+                            <th style="width:20%">Est Actif</th>
+                            <th style="width:20%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-user>
+                        <tr>
+                            <td>{{user.nom}}</td>
+                            <td>{{user.prenom}}</td>
+                            <td>{{user.email}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.roles?.title}}</td>
+                            <td>{{user.service?.libelle}}</td>
+                            <td>{{user.isActif ? 'oui' : 'non'}}</td>
+                            <td>
+                                <div class="flex gap-2"><button  pButton pRipple pTooltip="Editer"
+                                        tooltipPosition="top" class="p-button-success p-button-rounded"
+                                        icon="pi pi-file-edit"
+                                        (click)="ShowEditUser(); setEditedUser(user?.userId); $event.stopPropagation()"></button>
+                                    <button  pTooltip="Supprimer" tooltipPosition="top" pButton
+                                        pRipple class="p-button-danger p-button-rounded" icon="pi pi-trash"
+                                        (click)="showConfirmDelete(user)"></button>
+                                    <button *ngIf="user.isActif"  pTooltip="Désactiver" tooltipPosition="top" pButton
+                                        pRipple class="p-button-warning p-button-rounded" icon="pi {{user.isActif ? 'pi-lock' : 'pi-lock-open'}} "
+                                        (click)="disactivateUser(user?.userId)"></button>
+                                    <button pTooltip="changer mot de pass" tooltipPosition="top" pButton
+                                        pRipple class="p-button-secondary p-button-rounded" icon="pi pi-key"
+                                        [routerLink]="['/app/Reclamation/resetPassword/'+ user?.userId
+                                         ]"
+                                        ></button>
+                                    <button pTooltip="Dashboards" tooltipPosition="top" pButton
+                                        pRipple class="p-button-success p-button-rounded" icon="pi pi-chart-bar"
+                                        [routerLink]="['/app/Reclamation/userDashboard/'+ user?.userId
+                                         ]"
+                                        ></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9">
+                                <div class="text-center">
+                                    <div class="center_media">
+                                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data">
+                                    </div>
+                                    <p *ngIf="!is_loading" class="font-weight-bold mt-2">
+                                        Aucun enregistrement sur la base de données
+                                    </p>
+                                    <p *ngIf="is_loading" class="font-weight-bold mt-2">
+                                        Chargement ...
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            addProcessDialog                             -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="addUsersDialog" [style]="{width: '900px'}" header="Ajouter Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireAddUser">
+            <div class="p-fluid p-formgrid grid">
+
+                <div class="field col-6">
+                    <label for="Prenom">Prenom *</label>
+                    <input type="text" pInputText id="Prenom" formControlName="Prenom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Nom">Nom *</label>
+                    <input type="text" pInputText id="Nom" formControlName="Nom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Email">Email *</label>
+                    <input type="text" pInputText id="Email" formControlName="Email" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Username">Username *</label>
+                    <input type="text" pInputText id="Username" formControlName="Username" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="RoleId">Role *</label>
+                    <p-dropdown appendTo="body" [options]="roles" id="RoleId" formControlName="RoleId"
+                        optionLabel="title"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddUsersError['RoleId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RoleId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+                <div class="field col-12">
+                    <label for="perimeters">Service </label>
+                    <p-dropdown appendTo="body" [options]="services" id="perimeterId" formControlName="ServiceId"
+                        optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddUsersError['ServiceId'].errors}">
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError['ServiceId'].errors">Champ
+                        obligatoire.</small>
+                </div>
+                <div class="field col-4">
+                    <label for="Password">Password *</label>
+                    <p-password  id="Password" formControlName="Password" required  [toggleMask]="true"></p-password>
+                        <!-- [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireAddUsersError.LibelleAr.errors}" />
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && FormmulaireAddUsersError.libelleAr.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseAddUser()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="saveUser()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                            EditProcessDialog                            -->
+<!-- ----------------------------------------------------------------------- -->
+<p-dialog [(visible)]="editUsersDialog" [style]="{width: '900px'}" header="Modifier Processus" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="FormmulaireEditUser">
+            <div class="p-fluid p-formgrid grid">
+                <div class="field col-6">
+                    <label for="Prenom">Prenom *</label>
+                    <input type="text" pInputText id="Prenom" formControlName="Prenom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Nom">Nom *</label>
+                    <input type="text" pInputText id="Nom" formControlName="Nom" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Email">Email *</label>
+                    <input type="text" pInputText id="Email" formControlName="Email" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-6">
+                    <label for="Username">Username *</label>
+                    <input type="text" pInputText id="Username" formControlName="Username" required
+                         />
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError?.Libelle?.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+                <div class="field col-12">
+                    <label for="RoleId">Role *</label>
+                    <p-dropdown appendTo="body" [options]="roles" id="RoleId" formControlName="RolesId"
+                        optionLabel="title"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireEditUsersError['RolesId'].errors}">
+                    </p-dropdown>
+                    <!-- <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireEditSmqError.RoleId.errors">Champ
+                        obligatoire.</small> -->
+                </div>
+
+                <div class="field col-12">
+                    <label for="perimeters">Service *</label>
+                    <p-dropdown appendTo="body" [options]="services" id="perimeterId" formControlName="ServiceId"
+                        optionLabel="libelle"  optionValue="id" placeholder="-- Fait Votre Choix --"
+                        [ngClass]="{'ng-invalid ng-dirty' : submitted && FormmulaireEditUsersError['ServiceId'].errors}">
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid"
+                        *ngIf="submitted && FormmulaireAddUsersError['ServiceId'].errors">Champ
+                        obligatoire.</small>
+                </div>
+
+
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-danger"
+            (click)="CloseEditUser()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-success"
+            (click)="EditUser();"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Delete Action                              -->
+<!-- ----------------------------------------------------------------------- -->
+<p-toast class="cm-toast-confirm" position="center" key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirm()" label="Oui" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onReject()" label="Non" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+</p-toast>

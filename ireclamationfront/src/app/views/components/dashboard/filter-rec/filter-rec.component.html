@@ -1,0 +1,135 @@
+<p-toast></p-toast>
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-fieldset legend="Formulaire de recherche " [toggleable]="true">
+                <form [formGroup]="FormmulaireRecherche" (ngSubmit)="getReclamationwithFilter()">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="SourceId">Source :</label>
+
+                            <p-listbox [options]="sources" optionValue="id" formControlName="SourceId"
+                             optionLabel="libelle" [multiple]="true" [metaKeySelection]="false" ></p-listbox>
+
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="EtatReclamationId">Etat de reclamation :</label>
+                            <p-dropdown id="EtatReclamationId" [options]="etatReclamation" formControlName="EtatReclamationId" optionLabel="libelle"
+                                optionValue="id" placeholder="-- Fait Votre Choix --">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="TypeDate">Type de Date Filtré :</label>
+                            <p-dropdown id="TypeDate" [options]="TypeDate" formControlName="TypeDate" optionLabel="name"
+                                optionValue="code" placeholder="-- Fait Votre Choix --">
+                            </p-dropdown>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="DateDebut">Date de Début *</label>
+                            <input type="date" pInputText id="DateDebut" formControlName="DateDebut" required
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="DateEnd">Date de Fin *</label>
+                            <input type="date" pInputText id="DateEnd" formControlName="DateEnd" required
+                            />
+                        </div>
+                    </div>
+                    <div class="flex justify-content-center center_media mt-3">
+                        
+                        <button pButton pRipple type="submit" icon="pi pi-search" iconPos="right"
+                            (disabled)="_loadingService.isLoading" label="Rechercher / Rafraîchir"
+                            class="p-button-secondary mr-2 mb-2"></button>
+                    </div>
+                </form>
+            </p-fieldset>
+            <br>
+            <hr><br>
+            <!-- ----------------------------- With data ------------------------------ -->
+            <div *ngIf="ReclamationWithFilter.length > 0">
+                <div class="card">
+                    <div class="flex gap-2 justify-content-end">
+                        
+                        <button  pButton pRipple pTooltip="Exporter Pdf"
+                                            tooltipPosition="top" class="p-button-help p-button-rounded"
+                                            icon="pi pi-file-pdf"
+                                            label="Exporter Pdf"
+                                            iconPos="right"
+                                            (click)="ExportReclamationList(ReclamationWithFilter); $event.stopPropagation()"></button>
+                        <button  pButton pRipple pTooltip="Exporter Excel"
+                                            tooltipPosition="top" class="p-button-help p-button-rounded"
+                                            icon="pi pi-file-excel"
+                                            label="Exporter Excel"
+                                            iconPos="right"
+                                            (click)="ExcelReclamationList(ReclamationWithFilter); $event.stopPropagation()"></button>
+                    </div> <br>
+
+                    <div class="card flex justify-content-center">
+                        <p-table class="w-full" [value]="ReclamationWithFilter" dataKey="id" [paginator]="true"
+                            [showCurrentPageReport]="true" [rows]="5"
+                            currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} résultats"
+                            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [tableStyle]="{'min-width': '60rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="id"  style="width:20%">Reference <p-sortIcon field="id"></p-sortIcon></th>
+                                    <th pSortableColumn="reference"   style="width:20%">Reference BO <p-sortIcon field="reference"></p-sortIcon></th>
+                                    <th pSortableColumn="dateReception"   style="width:20%">Date de réception <p-sortIcon field="dateReception"></p-sortIcon></th>
+                                    <th pSortableColumn="dateCreation"   style="width:20%">Date de Création <p-sortIcon field="dateCreation"></p-sortIcon></th>
+                                    <th style="width:20%">Nom Complet</th>
+                                    <th style="width:20%">Affiliation</th>
+                                    <th style="width:20%">Immatriculation</th>
+                                    <th style="width:20%">Traité par</th>
+                                    <th style="width:20%">Crée par</th>
+                                    <th style="width:20%">Résumé</th>
+                                    <th style="width:20%">Source</th>
+                                    <th pSortableColumn="services.libelle" style="width:20%">Service <p-sortIcon field="services.libelle"></p-sortIcon></th>
+                                    <th style="width:20%">Réf BO dep</th>
+                                    <th style="width:20%">Date dep</th>
+                                    <th style="width:20%">Organisme</th>
+                                    <th style="width:20%">Etat de Réclamation</th></tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-reclamation>
+                                <tr>
+                                    <td>{{reclamation.id}}</td>
+                                    <td>{{reclamation.reference}}</td>
+                                    <td>{{reclamation.dateReception | date : 'dd/MM/yyyy'}}</td>
+                                    <td>{{reclamation.dateCreation | date : 'dd/MM/yyyy'}}</td>
+                                    <td>{{reclamation.adherent?.nom}} &nbsp; {{reclamation.adherent?.prenom}}</td>
+                                    <td>{{reclamation.adherent?.affiliation}}</td>
+                                    <td>{{reclamation.adherent?.immatriculation}}</td>
+                                    <td>{{reclamation?.lastUserTreated}}</td>
+                                    <td>{{reclamation?.user?.nom}} &nbsp; {{reclamation?.user?.prenom}}</td>
+                                    <td>{{reclamation.resume}}</td>
+                                    <td>{{reclamation.sources?.libelle}}</td>
+                                    <td>{{reclamation.services?.libelle}}</td>
+                                    <td>{{reclamation?.referenceBo}}</td>
+                                    <td>{{reclamation?.dateBOinp}}</td>
+                                    <td>{{reclamation?.organisme}}</td>
+                                    <td>{{reclamation.etatReclamation?.libelle}}</td>
+                                    
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+            <!-- ------------------------------ No data ------------------------------- -->
+            <div *ngIf="ReclamationWithFilter.length==0">
+                <div class="text-center">
+                    <div class="center_media">
+                        <img src="./assets/layout/images/no_data.svg" width="120px" alt="image no_data" />
+                    </div>
+                    <p *ngIf="FormmulaireRecherche.valid" class="font-weight-bold mt-2">
+                        Pas de Reclamation dans ce filter
+                    </p>
+                    <p *ngIf="FormmulaireRecherche.invalid" class="font-weight-bold mt-2">
+                        Veuillez remplir le formulaire !
+                    </p>
+                    <p *ngIf="_loadingService.isLoading" class="font-weight-bold mt-2">
+                        Chargement ...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

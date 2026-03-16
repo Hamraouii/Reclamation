@@ -1,0 +1,74 @@
+# stages:
+#   - build
+#   - deploy
+
+# variables:
+#   DEPLOY_SERVER: "192.168.1.31"
+#   DEPLOY_USER: "gsf2"
+
+# before_script:
+#   - whoami
+#   - hostname
+#   - pwd
+#   - ssh -v $DEPLOY_USER@$DEPLOY_SERVER "echo SSH OK"
+#   # - apt-get update -y && apt-get install -y openssh-client
+#   - eval $(ssh-agent -s)
+#   - mkdir -p ~/.ssh
+#   - chmod 700 ~/.ssh
+#   # Use base64-decoded key (matching your working pipeline)
+#   - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_ed25519
+#   - chmod 600 ~/.ssh/id_ed25519
+#   - ssh-add ~/.ssh/id_ed25519
+#   # Add server to known hosts with -H flag for security
+#   - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+#   - chmod 644 ~/.ssh/known_hosts
+#   # Test connection first
+#   - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER "echo 'SSH connection successful'"
+
+# build_backend:
+#   stage: build
+#   image: mcr.microsoft.com/dotnet/sdk:8.0  # Specify appropriate .NET image
+#   script:
+#     - dotnet restore
+#     - dotnet publish -c Release -o out
+#     # Note: Docker build should happen on deploy stage on target server
+#   artifacts:
+#     paths:
+#       - out/
+#       - Dockerfile
+#     expire_in: 1 hour
+#   only:
+#     - master
+
+# deploy_backend:
+#   stage: deploy
+#   image: alpine:latest  # Lightweight image for deployment tasks
+#   dependencies:
+#     - build_backend
+#   script:
+#     # Copy build artifacts and Dockerfile to target server
+#     - scp -r out/ Dockerfile $DEPLOY_USER@$DEPLOY_SERVER:/home/gsf2/ireclamation/
+    
+#     # Build and deploy on target server
+#     - ssh $DEPLOY_USER@$DEPLOY_SERVER "
+#         cd /home/gsf2/ireclamation &&
+#         docker build -t ireclamation-backend:latest . &&
+#         docker stop ireclamation-backend || true &&
+#         docker rm ireclamation-backend || true &&
+#         docker run -d --name ireclamation-backend -p 5000:5000 ireclamation-backend:latest &&
+#         echo 'Deployment completed at \$(date)' > deployment.log
+#       "
+#   only:
+#     - master
+#   environment:
+#     name: production
+#     url: http://$DEPLOY_SERVER:5000
+
+
+stages:
+  - test
+
+test_job:
+  stage: test
+  script:
+    - echo "Hello, world!"

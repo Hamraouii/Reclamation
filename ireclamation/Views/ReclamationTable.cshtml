@@ -1,0 +1,71 @@
+@model List<iReclamation.Dtos.ReclamationDto>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reclamation Report</title>
+    <style>
+        /* Add custom CSS styles for PDF layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Reclamation Report</h1>
+    <br/>
+    <br/>
+    <br/>
+<table>
+    <thead>
+    <tr>
+        <th>Reference</th>
+        <th>Reference BO</th>
+        <th>Reference BO dep</th>
+        <th>DateReception</th>
+        <th>DateCreation</th>
+        <th>Nom complet</th>
+        <th>Affiliation</th>
+        <th>Immatriculation</th>
+        <th>Traité par</th>
+        <th>Crée par</th>
+        <th>Résumé</th>
+        <th>Source</th>
+        <th>Service</th>
+        <th>Etat de Réclamation</th>
+
+                
+        <!-- Add headers for other properties -->
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var reclamation in Model)
+    {
+        <tr>
+            <td>@reclamation?.Id
+            <td>@reclamation?.Reference</td>
+            <td>@reclamation?.ReferenceBo</td>
+            <td>@reclamation?.DateReceptionString</td>
+            <td>@reclamation?.DateCreation.Value.ToString("yyyy-MM-dd")</td>
+            <td>@reclamation?.Adherent?.Nom  @reclamation?.Adherent?.Prenom</td>
+            <td>@reclamation?.Adherent?.Affiliation</td>
+            <td>@reclamation?.Adherent?.Immatriculation</td>
+            <td>@reclamation?.LastUserTreated</td>
+            <td>@reclamation?.createdBy</td>
+            <td>@reclamation?.Resume</td>
+            <td>@reclamation?.Sources?.Libelle</td>
+            <td>@reclamation?.Services?.Libelle</td>
+            <td>@reclamation?.EtatReclamation?.Libelle</td>
+            <!-- Add data cells for other properties -->
+        </tr>
+    }
+    </tbody>
+</table>
+</body>
+</html>
